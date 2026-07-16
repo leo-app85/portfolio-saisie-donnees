@@ -3,39 +3,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Mail, ArrowRight, ShieldCheck, Database, MapPin } from 'lucide-react';
 import { motion } from 'motion/react';
-import fallbackPic from '../assets/images/profile_photo_1784193154834.jpg';
 
 export default function Hero() {
   const email = "radoleoleonardo@gmail.com";
-  const [profileSrc, setProfileSrc] = useState<string>(fallbackPic);
-
-  useEffect(() => {
-    const formats = ['/profile.jpg', '/profile.png', '/profile.jpeg', '/profile.webp'];
-    let currentFormatIndex = 0;
-
-    const tryLoadNext = () => {
-      if (currentFormatIndex >= formats.length) {
-        setProfileSrc(fallbackPic);
-        return;
-      }
-
-      const testSrc = formats[currentFormatIndex];
-      const img = new Image();
-      img.src = testSrc;
-      img.onload = () => {
-        setProfileSrc(testSrc);
-      };
-      img.onerror = () => {
-        currentFormatIndex++;
-        tryLoadNext();
-      };
-    };
-
-    tryLoadNext();
-  }, []);
 
   return (
     <section
@@ -72,14 +45,9 @@ export default function Hero() {
               id="hero-profile-header"
             >
               <div 
-                className="w-14 h-14 rounded-full shrink-0 overflow-hidden shadow-xs border-2 border-slate-100"
+                className="w-14 h-14 rounded-full shrink-0 flex items-center justify-center bg-[#1F4E5F] text-white font-sans text-lg font-bold tracking-wider shadow-xs border-2 border-slate-100"
               >
-                <img 
-                  src={profileSrc} 
-                  alt="Ainga Leonardo RANDRIAMIARDO" 
-                  className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
-                />
+                AR
               </div>
 
               <div className="space-y-0.5">

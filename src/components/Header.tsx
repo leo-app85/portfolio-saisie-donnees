@@ -6,40 +6,11 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, X, Database } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import fallbackPic from '../assets/images/profile_photo_1784193154834.jpg';
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState('accueil');
-  const [profileSrc, setProfileSrc] = useState<string>(fallbackPic);
-
-  useEffect(() => {
-    // Try to load user's real uploaded photo first
-    const formats = ['/profile.jpg', '/profile.png', '/profile.jpeg', '/profile.webp'];
-    let currentFormatIndex = 0;
-
-    const tryLoadNext = () => {
-      if (currentFormatIndex >= formats.length) {
-        // Fallback to our compiled placeholder image
-        setProfileSrc(fallbackPic);
-        return;
-      }
-
-      const testSrc = formats[currentFormatIndex];
-      const img = new Image();
-      img.src = testSrc;
-      img.onload = () => {
-        setProfileSrc(testSrc);
-      };
-      img.onerror = () => {
-        currentFormatIndex++;
-        tryLoadNext();
-      };
-    };
-
-    tryLoadNext();
-  }, []);
 
   const navItems = [
     { id: 'accueil', label: 'Accueil' },
@@ -99,12 +70,9 @@ export default function Header() {
           className="flex items-center focus:outline-none group"
           id="nav-logo"
         >
-          <img
-            src={profileSrc}
-            alt="AR"
-            referrerPolicy="no-referrer"
-            className="w-10 h-10 rounded-full object-cover shadow-xs transition-transform duration-200 group-hover:scale-105"
-          />
+          <div className="w-10 h-10 rounded-full bg-[#1F4E5F] flex items-center justify-center text-white font-sans text-sm font-bold tracking-wider shadow-xs transition-transform duration-200 group-hover:scale-105">
+            AR
+          </div>
         </button>
 
         {/* Desktop Navigation */}
