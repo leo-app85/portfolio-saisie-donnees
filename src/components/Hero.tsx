@@ -3,74 +3,39 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useRef } from 'react';
-import { Mail, ArrowRight, ShieldCheck, Database, MapPin, Camera } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Mail, ArrowRight, ShieldCheck, Database, MapPin } from 'lucide-react';
 import { motion } from 'motion/react';
+import fallbackPic from '../assets/images/profile_photo_1784193154834.jpg';
 
-export default function Hero({
-  profilePic,
-  onProfilePicChange,
-}: {
-  profilePic: string | null;
-  onProfilePicChange: (pic: string | null) => void;
-}) {
+export default function Hero() {
   const email = "radoleoleonardo@gmail.com";
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [profileSrc, setProfileSrc] = useState<string>(fallbackPic);
 
-  const handleAvatarClick = () => {
-    fileInputRef.current?.click();
-  };
+  useEffect(() => {
+    const formats = ['/profile.jpg', '/profile.png', '/profile.jpeg', '/profile.webp'];
+    let currentFormatIndex = 0;
 
-  const compressImage = (file: File, callback: (base64: string) => void) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = (event) => {
-      const img = new Image();
-      img.src = event.target?.result as string;
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const MAX_WIDTH = 300;
-        const MAX_HEIGHT = 300;
-        let width = img.width;
-        let height = img.height;
-
-        if (width > height) {
-          if (width > MAX_WIDTH) {
-            height *= MAX_WIDTH / width;
-            width = MAX_WIDTH;
-          }
-        } else {
-          if (height > MAX_HEIGHT) {
-            width *= MAX_HEIGHT / height;
-            height = MAX_HEIGHT;
-          }
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          ctx.drawImage(img, 0, 0, width, height);
-          const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-          callback(dataUrl);
-        } else {
-          callback(event.target?.result as string);
-        }
-      };
-    };
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (!file.type.startsWith('image/')) {
+    const tryLoadNext = () => {
+      if (currentFormatIndex >= formats.length) {
+        setProfileSrc(fallbackPic);
         return;
       }
-      compressImage(file, (base64) => {
-        onProfilePicChange(base64);
-      });
-    }
-  };
+
+      const testSrc = formats[currentFormatIndex];
+      const img = new Image();
+      img.src = testSrc;
+      img.onload = () => {
+        setProfileSrc(testSrc);
+      };
+      img.onerror = () => {
+        currentFormatIndex++;
+        tryLoadNext();
+      };
+    };
+
+    tryLoadNext();
+  }, []);
 
   return (
     <section
@@ -107,37 +72,15 @@ export default function Hero({
               id="hero-profile-header"
             >
               <div 
-                onClick={handleAvatarClick}
-                title="Changer la photo de profil"
-                className="w-14 h-14 rounded-full relative group shrink-0 overflow-hidden cursor-pointer shadow-xs border-2 border-slate-100 hover:border-[#1F4E5F]/30 transition-all duration-200"
+                className="w-14 h-14 rounded-full shrink-0 overflow-hidden shadow-xs border-2 border-slate-100"
               >
-                {profilePic ? (
-                  <img 
-                    src={profilePic} 
-                    alt="Photo de profil" 
-                    className="w-full h-full object-cover"
-                    referrerPolicy="no-referrer"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-[#1F4E5F] text-white font-sans font-bold flex items-center justify-center text-lg">
-                    AR
-                  </div>
-                )}
-                {/* Overlay on hover */}
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center text-white">
-                  <Camera size={14} />
-                  <span className="text-[7px] font-bold font-sans mt-0.5 tracking-tight uppercase">Modifier</span>
-                </div>
+                <img 
+                  src={profileSrc} 
+                  alt="Ainga Leonardo RANDRIAMIARDO" 
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
               </div>
-
-              {/* Hidden file input */}
-              <input 
-                type="file" 
-                ref={fileInputRef} 
-                accept="image/*" 
-                className="hidden" 
-                onChange={handleFileChange} 
-              />
 
               <div className="space-y-0.5">
                 <div className="font-sans font-bold text-lg text-slate-900 tracking-tight leading-tight">
@@ -145,20 +88,6 @@ export default function Hero({
                 </div>
                 <div className="font-sans text-xs text-slate-500 font-medium flex flex-wrap items-center gap-x-2">
                   <span>Opérateur de saisie de données • Madagascar</span>
-                  {profilePic && (
-                    <>
-                      <span className="text-slate-300">•</span>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onProfilePicChange(null);
-                        }}
-                        className="text-[10px] text-red-500 hover:text-red-700 font-bold underline cursor-pointer transition-colors focus:outline-none"
-                      >
-                        Supprimer la photo
-                      </button>
-                    </>
-                  )}
                 </div>
               </div>
             </motion.div>

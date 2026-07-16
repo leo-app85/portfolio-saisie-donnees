@@ -54,3 +54,4 @@ export interface LanguageItem {
   level: string;
   percentage: number;
 }
+
